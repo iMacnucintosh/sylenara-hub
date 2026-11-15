@@ -10,7 +10,7 @@ import qs.components.controls
 import qs.services
 import qs.modules.nexus.common
 
-// Fields of a FortiClient connection, shown by Nexus → Network → Add / Edit VPN provider when the
+// Fields of a FortiClient connection, shown by Settings → Network → Add / Edit VPN provider when the
 // FortiClient type is chosen (manifest `vpnProviderType.editor`). Contract with the page:
 //   options / providerId (in), validate(): string, collectOptions(): var, commit(id) (stores the
 //   password in the connection file, never in shell.json).

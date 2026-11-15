@@ -10,7 +10,7 @@ y el catálogo que lee **Things**.
 | [`tasks`](extensions/tasks) | Lista de tareas en el carrusel del dashboard |
 | [`hydration`](extensions/hydration) | Control del agua que bebes, con recordatorios |
 | [`games`](extensions/games) | Tu biblioteca de Steam en el dashboard: perfil, logros, sesiones y calendario de actividad |
-| [`vpn-forticlient`](extensions/vpn-forticlient) | Conexiones VPN FortiClient (openfortivpn) en Nexus → Red, con códigos OTP y certificados de cliente |
+| [`vpn-forticlient`](extensions/vpn-forticlient) | Conexiones VPN FortiClient (openfortivpn) en Ajustes → Red, con códigos OTP y certificados de cliente |
 
 El catálogo completo, con versiones, enlaces de descarga y `sha256`, está en [`index.json`](index.json).
 

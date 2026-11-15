@@ -9,7 +9,7 @@ import qs.components.controls
 import qs.components.filedialog
 import qs.services
 
-// Shown in the extension's card in Nexus → Extensions: where the connections are, and export /
+// Shown in the extension's card in Settings → Extensions: where the connections are, and export /
 // import of all of them (to move them to another PC with this same extension).
 ColumnLayout {
     id: root
@@ -49,7 +49,7 @@ ColumnLayout {
     StyledText {
         Layout.fillWidth: true
         visible: !root.service.helperInstalled
-        text: Tr.tr("The FortiClient helper is not installed: install the extension in Nexus → Extensions")
+        text: Tr.tr("The FortiClient helper is not installed: install the extension in Settings → Extensions")
         color: Colours.palette.m3error
         font: Tokens.font.label.small
         wrapMode: Text.Wrap

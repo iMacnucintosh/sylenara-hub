@@ -10,7 +10,7 @@ import qs.components.filedialog
 import qs.services
 import qs.modules.nexus.common
 
-// First row of Nexus → Network → Add provider → FortiClient (manifest `vpnProviderType.importer`):
+// First row of Settings → Network → Add provider → FortiClient (manifest `vpnProviderType.importer`):
 // fill the connections from an export of this extension (Extensions card → Backup → Export).
 ConnectedRect {
     id: root

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export / import the FortiClient connections of Sylphrena (extension settings in Nexus).
+"""Export / import the FortiClient connections of Sylphrena (extension settings in Settings).
 
 Both commands read one JSON request on stdin (so the passphrase never reaches argv or the
 environment) and print one JSON result on stdout.

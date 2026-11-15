@@ -9,7 +9,7 @@
       "name": "Games (Steam)",
       "description": "Steam library, achievements and play time in a dashboard tab",
       "icon": "sports_esports",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "apiVersion": 1,
       "requires": ">=0.3.0",
       "system": false,
@@ -26,9 +26,9 @@
         "state:nonsteam-sessions.json"
       ],
       "path": "extensions/games",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/games-0.1.4/games-0.1.4.zip",
-      "sha256": "048b5aeea024550db43462bb7f1b661f0821aa42d166210ed26ba3f5bb811624",
-      "size": 44496,
+      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/games-0.1.5/games-0.1.5.zip",
+      "sha256": "baa5a8dff12c5333292854f89b8de2e86155822e51477b8e8697dee9f8735d11",
+      "size": 44500,
       "i18n": {
         "es": {
           "name": "Juegos (Steam)",
@@ -103,7 +103,7 @@
       "name": "VPN FortiClient",
       "description": "Adds FortiClient VPN connections to Network, with OTP codes and client certificates",
       "icon": "verified_user",
-      "version": "0.4.2",
+      "version": "0.4.3",
       "apiVersion": 1,
       "requires": ">=0.2.0",
       "system": true,
@@ -111,9 +111,9 @@
       "optional": [],
       "data": [],
       "path": "extensions/vpn-forticlient",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/vpn-forticlient-0.4.2/vpn-forticlient-0.4.2.zip",
-      "sha256": "c27ef9b2c5eba47488f81b227e2f121eacf5453611febf65e37f3f6ca3fe3e7f",
-      "size": 28745,
+      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/vpn-forticlient-0.4.3/vpn-forticlient-0.4.3.zip",
+      "sha256": "f58a84753c7d9d72b3e996720784d1951ec07b75884f80686b22ad3d552d855d",
+      "size": 28760,
       "i18n": {
         "es": {
           "name": "VPN FortiClient",

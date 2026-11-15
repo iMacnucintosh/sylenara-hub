@@ -4,7 +4,7 @@
   "name": "VPN FortiClient",
   "description": "Adds FortiClient VPN connections to Network, with OTP codes and client certificates",
   "icon": "verified_user",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "apiVersion": 1,
   "system": {
     "install": "system/install.sh",

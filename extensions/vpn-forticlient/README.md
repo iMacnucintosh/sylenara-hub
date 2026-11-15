@@ -1,6 +1,6 @@
 # VPN FortiClient
 
-Extensión de Sylphrena: conexiones VPN FortiClient (`openfortivpn`) en **Nexus → Red**, conectables desde el icono VPN de la barra.
+Extensión de Sylphrena: conexiones VPN FortiClient (`openfortivpn`) en **Ajustes → Red**, conectables desde el icono VPN de la barra.
 
 ## Qué ofrece
 

@@ -8,7 +8,7 @@ An extension is a folder extensions/<id>/ with a manifest.json (id, name, descri
 type, and optionally apiVersion, requires.sylphrena, requires.apps / requires.optional (programs it needs or can use, as short texts for the user) and system). The index copies from it what Things
 shows before installing: apiVersion, requires (which Sylphrena it needs) and system (it asks for
 administrator rights). The zip holds that folder (<id>/…, with the executable bits) and is what Sylphrena installs
-(Nexus → Extensions → Install from zip) and what Things downloads. Zips are deterministic: the same
+(Settings → Extensions → Install from zip) and what Things downloads. Zips are deterministic: the same
 sources give the same bytes, so the sha256 in index.json only changes when the sources do.
 
 Releases: the zip of <id> <version> is published as the asset of the release tagged <id>-<version>
