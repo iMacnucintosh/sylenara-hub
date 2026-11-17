@@ -51,4 +51,4 @@ Para sacar una versión nueva: sube `version` en el manifiesto, `scripts/build.p
 
 ## Licencia
 
-GPL-3.0, como Lunele (ver [`LICENSE`](LICENSE)).
+GPL-3.0, como Lunele (ver [`LICENSE`](LICENSE)). Copyright (C) 2026 Manuel López Mallorquín.

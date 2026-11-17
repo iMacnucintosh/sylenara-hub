@@ -51,4 +51,4 @@ To ship a new version: raise `version` in the manifest, `scripts/build.py`, comm
 
 ## License
 
-GPL-3.0, like Lunele (see [`LICENSE`](LICENSE)).
+GPL-3.0, like Lunele (see [`LICENSE`](LICENSE)). Copyright (C) 2026 Manuel López Mallorquín.
