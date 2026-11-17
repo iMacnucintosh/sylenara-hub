@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Sylphrena.I18n
+import Lunele.I18n
 import "steam"
 
 // Service of the Games extension: the Steam façade used by the games tab and the settings. Logic

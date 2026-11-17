@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import Sylphrena.Config
-import Sylphrena.I18n
+import Lunele.Config
+import Lunele.I18n
 import qs.components
 import qs.components.controls
 import qs.services
@@ -124,7 +124,7 @@ ColumnLayout {
     StyledText {
         Layout.fillWidth: true
         Layout.leftMargin: Tokens.padding.small
-        text: Tr.tr("The password is stored only in ~/.config/sylphrena/vpn/ (readable only by you), never in shell.json.")
+        text: Tr.tr("The password is stored only in ~/.config/lunele/vpn/ (readable only by you), never in shell.json.")
         color: Colours.palette.m3onSurfaceVariant
         font: Tokens.font.body.small
         wrapMode: Text.WordWrap

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Steam play activity history for Sylphrena.
+"""Steam play activity history for Lunele.
 
 The Steam Web API only exposes lifetime and two-week totals, so this keeps two
 sources of per-day activity:
@@ -38,7 +38,7 @@ SHORTCUT_BIT = 0x80000000  # non-Steam shortcuts, tracked by Millennium instead
 
 def state_dir() -> Path:
     base = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
-    return base / "sylphrena"
+    return base / "lunele"
 
 
 def steam_likely_running() -> bool:

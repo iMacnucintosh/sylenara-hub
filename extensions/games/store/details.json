@@ -9,8 +9,8 @@
   "author": "iMacnucintosh",
   "license": "GPL-3.0",
   "links": {
-    "source": "https://github.com/iMacnucintosh/sylphrena-hub/tree/main/extensions/games",
-    "issues": "https://github.com/iMacnucintosh/sylphrena-hub/issues"
+    "source": "https://github.com/iMacnucintosh/lunele-hub/tree/main/extensions/games",
+    "issues": "https://github.com/iMacnucintosh/lunele-hub/issues"
   },
   "changelog": [
     {
@@ -18,7 +18,7 @@
       "date": "2026-11-11",
       "changes": [
         "No more console warning when the achievements list closes",
-        "Needs Sylphrena 0.3"
+        "Needs Lunele 0.3"
       ]
     },
     {

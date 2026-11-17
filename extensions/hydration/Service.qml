@@ -3,14 +3,14 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Sylphrena
-import Sylphrena.Config
-import Sylphrena.I18n
+import Lunele
+import Lunele.Config
+import Lunele.I18n
 import qs.services
 import qs.utils
 
 // Service of the Hydration extension: the day's water intake, reminders (a notification with quick
-// add buttons) and persistence (~/.local/state/sylphrena/hydration.json). Settings live in the
+// add buttons) and persistence (~/.local/state/lunele/hydration.json). Settings live in the
 // extension's own config (ext.config); the service exists only while the extension is enabled.
 Scope {
     id: root
@@ -189,7 +189,7 @@ Scope {
         root.showReminder();
     }
 
-    // `sylph ext hydration <command>` (contributes.commands in the manifest)
+    // `lunele ext hydration <command>` (contributes.commands in the manifest)
     function command(name: string, args: list<string>): string {
         if (name === "show") {
             root.showReminder();
@@ -198,7 +198,7 @@ Scope {
         if (name === "add") {
             const ml = parseInt(args[0] ?? "", 10);
             if (!(ml > 0))
-                return "error: usage: sylph ext hydration add <ml>";
+                return "error: usage: lunele ext hydration add <ml>";
             root.addMl(ml);
             return `${root.drunkMl} / ${root.dailyGoalMl} ml`;
         }
@@ -218,7 +218,7 @@ Scope {
                 summary: Tr.tr("Time to drink water"),
                 body: "",
                 // The day's water as the notification's progress bar, with what was drunk and the goal at its ends
-                // (Sylphrena ≥ 0.5.2)
+                // (Lunele ≥ 0.5.2)
                 localProgress: root.dailyGoalMl > 0 ? Math.min(1, root.drunkMl / root.dailyGoalMl) : 0,
                 progressFrom: `${root.drunkMl} ml`,
                 progressTo: `${root.dailyGoalMl} ml`,

@@ -1,6 +1,6 @@
 # VPN FortiClient
 
-Extensión de Sylphrena: conexiones VPN FortiClient (`openfortivpn`) en **Ajustes → Red**, conectables desde el icono VPN de la barra.
+Extensión de Lunele: conexiones VPN FortiClient (`openfortivpn`) en **Ajustes → Red**, conectables desde el icono VPN de la barra.
 
 ## Qué ofrece
 
@@ -16,10 +16,10 @@ Extensión de Sylphrena: conexiones VPN FortiClient (`openfortivpn`) en **Ajuste
 ## Dónde se guarda
 
 - Lo no secreto, en el `shell.json` de cada usuario (`utilities.vpn.provider`).
-- La contraseña, solo en `~/.config/sylphrena/vpn/<id>.conf` (permisos 600), nunca en `shell.json`.
+- La contraseña, solo en `~/.config/lunele/vpn/<id>.conf` (permisos 600), nunca en `shell.json`.
 
 ## Instalación y permisos
 
-`openfortivpn` necesita root. Al instalar el zip se pide la contraseña una vez y se instalan, con la extensión: `openfortivpn` (si falta), el ayudante `/usr/local/sbin/sylphrena-fortivpn` y una regla de sudoers limitada a ese ayudante. El ayudante lee la configuración **como tu usuario**, solo acepta opciones conocidas de openfortivpn (nada de `pppd-*`) y la copia a `/run` (solo root). Al eliminar la extensión se quita todo.
+`openfortivpn` necesita root. Al instalar el zip se pide la contraseña una vez y se instalan, con la extensión: `openfortivpn` (si falta), el ayudante `/usr/local/sbin/lunele-fortivpn` y una regla de sudoers limitada a ese ayudante. El ayudante lee la configuración **como tu usuario**, solo acepta opciones conocidas de openfortivpn (nada de `pppd-*`) y la copia a `/run` (solo root). Al eliminar la extensión se quita todo.
 
 Se instala desde zip: ver el README de la raíz.

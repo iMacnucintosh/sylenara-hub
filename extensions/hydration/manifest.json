@@ -32,7 +32,7 @@
     ]
   },
   "requires": {
-    "sylphrena": ">=0.5.3"
+    "lunele": ">=0.5.3"
   },
   "data": [
     "state:hydration.json"

@@ -16,7 +16,7 @@
     ]
   },
   "requires": {
-    "sylphrena": ">=0.3.0"
+    "lunele": ">=0.3.0"
   },
   "data": [
     "state:tasks.json"

@@ -40,6 +40,6 @@
     ]
   },
   "requires": {
-    "sylphrena": ">=0.2.0"
+    "lunele": ">=0.2.0"
   }
 }

@@ -5,9 +5,9 @@
   scripts/build.py --check    only verify that index.json matches the sources (exit 1 if not)
 
 An extension is a folder extensions/<id>/ with a manifest.json (id, name, description, version, icon,
-type, and optionally apiVersion, requires.sylphrena, requires.apps / requires.optional (programs it needs or can use, as short texts for the user) and system). The index copies from it what Things
-shows before installing: apiVersion, requires (which Sylphrena it needs) and system (it asks for
-administrator rights). The zip holds that folder (<id>/…, with the executable bits) and is what Sylphrena installs
+type, and optionally apiVersion, requires.lunele, requires.apps / requires.optional (programs it needs or can use, as short texts for the user) and system). The index copies from it what Things
+shows before installing: apiVersion, requires (which Lunele it needs) and system (it asks for
+administrator rights). The zip holds that folder (<id>/…, with the executable bits) and is what Lunele installs
 (Settings → Extensions → Install from zip) and what Things downloads. Zips are deterministic: the same
 sources give the same bytes, so the sha256 in index.json only changes when the sources do.
 
@@ -24,7 +24,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-REPO = "iMacnucintosh/sylphrena-hub"
+REPO = "iMacnucintosh/lunele-hub"
 KINDS = {"extensions": "extension"}  # folder -> kind in the index
 
 
@@ -139,7 +139,7 @@ def entries() -> list[dict]:
                 "icon": m.get("icon", "extension"),
                 "version": version,
                 "apiVersion": m.get("apiVersion", 1),
-                "requires": (m.get("requires") or {}).get("sylphrena", ""),
+                "requires": (m.get("requires") or {}).get("lunele", ""),
                 "system": bool((m.get("system") or {}).get("install")),
                 "needs": list((m.get("requires") or {}).get("apps", [])),
                 "optional": list((m.get("requires") or {}).get("optional", [])),
@@ -181,7 +181,7 @@ def published_changes(items: list[dict]) -> list[str]:
 def main() -> None:
     index = {
         "schema": 1,
-        "name": "Sylphrena Hub",
+        "name": "Lunele Hub",
         "repository": f"https://github.com/{REPO}",
         "items": entries(),
     }

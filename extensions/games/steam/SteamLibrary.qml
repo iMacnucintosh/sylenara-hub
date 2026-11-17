@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Sylphrena.I18n
+import Lunele.I18n
 
 // Profile / level / recent / owned / friends fetch + owned derived stats.
 QtObject {

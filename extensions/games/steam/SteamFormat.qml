@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Sylphrena.I18n
+import Lunele.I18n
 
 // Pure presentation helpers for the Steam façade (no network / no Process).
 QtObject {

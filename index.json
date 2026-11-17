@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "name": "Sylphrena Hub",
-  "repository": "https://github.com/iMacnucintosh/sylphrena-hub",
+  "name": "Lunele Hub",
+  "repository": "https://github.com/iMacnucintosh/lunele-hub",
   "items": [
     {
       "id": "games",
@@ -26,7 +26,7 @@
         "state:nonsteam-sessions.json"
       ],
       "path": "extensions/games",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/games-0.1.5/games-0.1.5.zip",
+      "zip": "https://github.com/iMacnucintosh/lunele-hub/releases/download/games-0.1.5/games-0.1.5.zip",
       "sha256": "baa5a8dff12c5333292854f89b8de2e86155822e51477b8e8697dee9f8735d11",
       "size": 44500,
       "i18n": {
@@ -41,7 +41,7 @@
           ]
         }
       },
-      "store": "https://raw.githubusercontent.com/iMacnucintosh/sylphrena-hub/main/store/games.json"
+      "store": "https://raw.githubusercontent.com/iMacnucintosh/lunele-hub/main/store/games.json"
     },
     {
       "id": "hydration",
@@ -59,7 +59,7 @@
         "state:hydration.json"
       ],
       "path": "extensions/hydration",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/hydration-0.1.4/hydration-0.1.4.zip",
+      "zip": "https://github.com/iMacnucintosh/lunele-hub/releases/download/hydration-0.1.4/hydration-0.1.4.zip",
       "sha256": "5e610175570f7b543567908a25adccb6dac1e0f25affc37e82b4531761975a2f",
       "size": 10116,
       "i18n": {
@@ -68,7 +68,7 @@
           "description": "Control de agua con recordatorios"
         }
       },
-      "store": "https://raw.githubusercontent.com/iMacnucintosh/sylphrena-hub/main/store/hydration.json"
+      "store": "https://raw.githubusercontent.com/iMacnucintosh/lunele-hub/main/store/hydration.json"
     },
     {
       "id": "tasks",
@@ -86,7 +86,7 @@
         "state:tasks.json"
       ],
       "path": "extensions/tasks",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/tasks-0.1.2/tasks-0.1.2.zip",
+      "zip": "https://github.com/iMacnucintosh/lunele-hub/releases/download/tasks-0.1.2/tasks-0.1.2.zip",
       "sha256": "c029423ab8bf5af5193bff0203b37c74244ea085fdbc53695e0eac9e0acee9b7",
       "size": 5240,
       "i18n": {
@@ -95,7 +95,7 @@
           "description": "Lista de tareas: crea, completa y elimina"
         }
       },
-      "store": "https://raw.githubusercontent.com/iMacnucintosh/sylphrena-hub/main/store/tasks.json"
+      "store": "https://raw.githubusercontent.com/iMacnucintosh/lunele-hub/main/store/tasks.json"
     },
     {
       "id": "vpn-forticlient",
@@ -111,7 +111,7 @@
       "optional": [],
       "data": [],
       "path": "extensions/vpn-forticlient",
-      "zip": "https://github.com/iMacnucintosh/sylphrena-hub/releases/download/vpn-forticlient-0.4.3/vpn-forticlient-0.4.3.zip",
+      "zip": "https://github.com/iMacnucintosh/lunele-hub/releases/download/vpn-forticlient-0.4.3/vpn-forticlient-0.4.3.zip",
       "sha256": "f58a84753c7d9d72b3e996720784d1951ec07b75884f80686b22ad3d552d855d",
       "size": 28760,
       "i18n": {
@@ -120,7 +120,7 @@
           "description": "Añade conexiones VPN FortiClient a Red, con códigos OTP y certificados de cliente"
         }
       },
-      "store": "https://raw.githubusercontent.com/iMacnucintosh/sylphrena-hub/main/store/vpn-forticlient.json"
+      "store": "https://raw.githubusercontent.com/iMacnucintosh/lunele-hub/main/store/vpn-forticlient.json"
     }
   ]
 }

@@ -10,8 +10,8 @@
   "author": "iMacnucintosh",
   "license": "GPL-3.0",
   "links": {
-    "source": "https://github.com/iMacnucintosh/sylphrena-hub/tree/main/extensions/hydration",
-    "issues": "https://github.com/iMacnucintosh/sylphrena-hub/issues"
+    "source": "https://github.com/iMacnucintosh/lunele-hub/tree/main/extensions/hydration",
+    "issues": "https://github.com/iMacnucintosh/lunele-hub/issues"
   },
   "changelog": [
     {
@@ -31,7 +31,7 @@
   ],
   "screenshots": [
     {
-      "url": "https://raw.githubusercontent.com/iMacnucintosh/sylphrena-hub/main/extensions/hydration/store/screenshots/dashboard.png",
+      "url": "https://raw.githubusercontent.com/iMacnucintosh/lunele-hub/main/extensions/hydration/store/screenshots/dashboard.png",
       "caption": "The Hydration widget: today's progress as a water level"
     }
   ],

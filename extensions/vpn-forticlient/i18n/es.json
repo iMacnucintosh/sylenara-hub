@@ -58,7 +58,7 @@
   "The file has no connections": "El fichero no tiene conexiones",
   "The file is encrypted with a passphrase you will need to import it.": "El fichero se cifra con una frase de paso que necesitarás para importarlo.",
   "The passphrase must have at least 8 characters": "La frase de paso debe tener al menos 8 caracteres",
-  "The password is stored only in ~/.config/sylphrena/vpn/ (readable only by you), never in shell.json.": "La contraseña se guarda solo en ~/.config/sylphrena/vpn/ (solo tú puedes leerla), nunca en shell.json.",
+  "The password is stored only in ~/.config/lunele/vpn/ (readable only by you), never in shell.json.": "La contraseña se guarda solo en ~/.config/lunele/vpn/ (solo tú puedes leerla), nunca en shell.json.",
   "There are no FortiClient connections to export": "No hay conexiones FortiClient que exportar",
   "This export comes from a newer version of the extension": "Esta exportación es de una versión más nueva de la extensión",
   "This file is encrypted: enter its passphrase": "Este fichero está cifrado: escribe su frase de paso",

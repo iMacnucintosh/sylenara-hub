@@ -1,9 +1,9 @@
-<h1 align="center">Sylphrena Hub</h1>
+<h1 align="center">Lunele Hub</h1>
 
 <p align="center"><strong>English</strong> · <a href="./README.es.md">Español</a></p>
 
 <p align="center">
-Extensions (and, in time, widgets and more) for the <a href="https://github.com/iMacnucintosh/sylphrena-shell">Sylphrena</a> shell, and the catalogue that <strong>Things</strong> reads.
+Extensions (and, in time, widgets and more) for the <a href="https://github.com/iMacnucintosh/lunele-shell">Lunele</a> shell, and the catalogue that <strong>Things</strong> reads.
 </p>
 
 ## What is in it
@@ -19,9 +19,9 @@ The full catalogue, with versions, download links and `sha256`, is in [`index.js
 
 ## Install an extension
 
-With **Things** (the **Sylphrena** section): click an extension to see its page (description, screenshots, requirements, what it touches on your computer and news) and then **Install**. It asks for confirmation and, only if the extension needs administrator rights, for your password. From a terminal: `sylph ext list`, `sylph ext install <zip>` and `sylph ext remove <id> [--purge]`.
+With **Things** (the **Lunele** section): click an extension to see its page (description, screenshots, requirements, what it touches on your computer and news) and then **Install**. It asks for confirmation and, only if the extension needs administrator rights, for your password. From a terminal: `lunele ext list`, `lunele ext install <zip>` and `lunele ext remove <id> [--purge]`.
 
-For a loose zip: in Things, **Install from zip**, or `sylph ext install <zip>`. Removing an extension (the bin, with an optional box to delete its settings and data) also removes what it installed as administrator.
+For a loose zip: in Things, **Install from zip**, or `lunele ext install <zip>`. Removing an extension (the bin, with an optional box to delete its settings and data) also removes what it installed as administrator.
 
 ## The page of each extension (`store/`)
 
@@ -35,7 +35,7 @@ What Things shows when you open an extension (long description, highlights, news
 
 ## For those who publish here
 
-Each extension is a folder `extensions/<id>/` with its `manifest.json` (see Sylphrena's `AGENTS.md`, the "Extensions" section). The rules of the project apply here too:
+Each extension is a folder `extensions/<id>/` with its `manifest.json` (see Lunele's `AGENTS.md`, the "Extensions" section). The rules of the project apply here too:
 
 - **i18n always:** every visible text goes through `Tr.*` and is translated; the extension's catalogue lives in `i18n/es.json`.
 - **Nothing private:** no credentials, hosts or data of your network. Each person's configuration lives in their own `shell.json` and files.
@@ -51,4 +51,4 @@ To ship a new version: raise `version` in the manifest, `scripts/build.py`, comm
 
 ## License
 
-GPL-3.0, like Sylphrena (see [`LICENSE`](LICENSE)).
+GPL-3.0, like Lunele (see [`LICENSE`](LICENSE)).
