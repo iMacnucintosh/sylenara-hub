@@ -9,10 +9,17 @@
   "author": "iMacnucintosh",
   "license": "GPL-3.0",
   "links": {
-    "source": "https://github.com/iMacnucintosh/sylphrena-hub/tree/main/extensions/hydration",
-    "issues": "https://github.com/iMacnucintosh/sylphrena-hub/issues"
+    "source": "https://github.com/iMacnucintosh/sylenara-hub/tree/main/extensions/hydration",
+    "issues": "https://github.com/iMacnucintosh/sylenara-hub/issues"
   },
   "changelog": [
+    {
+      "version": "0.1.5",
+      "date": "2026-11-17",
+      "changes": [
+        "Made for Sylenara 0.7: it needs that version or newer"
+      ]
+    },
     {
       "version": "0.1.1",
       "date": "2026-11-11",

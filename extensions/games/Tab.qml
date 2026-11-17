@@ -4,8 +4,8 @@ import "games"
 import QtQuick
 import QtQuick.Layouts
 import M3Shapes
-import Sylphrena.Config
-import Sylphrena.I18n
+import Sylenara.Config
+import Sylenara.I18n
 import qs.components
 import qs.components.controls
 import qs.components.images
@@ -59,7 +59,7 @@ Item {
             sourceComponent: PlaceholderCard {
                 icon: !root.service.configured ? "key" : "error"
                 title: !root.service.configured ? Tr.tr("Configure Steam") : Tr.tr("Could not load Steam data")
-                body: !root.service.configured ? Tr.tr("Add your API key and Steam ID in Nexus → Extensions.") : root.service.error
+                body: !root.service.configured ? Tr.tr("Add your API key and Steam ID in Settings → Extensions.") : root.service.error
             }
         }
 

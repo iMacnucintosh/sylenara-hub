@@ -1,14 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Io
-import Sylphrena.Config
-import Sylphrena.I18n
+import Sylenara.Config
+import Sylenara.I18n
 import qs.components
 import qs.components.controls
 import qs.services
 import qs.modules.nexus.common
 
-// Settings of the Games extension (Nexus → Extensions): Steam API key, Steam ID, auto refresh.
+// Settings of the Games extension (Settings → Extensions): Steam API key, Steam ID, auto refresh.
 ColumnLayout {
     id: root
 

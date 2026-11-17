@@ -4,8 +4,8 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import M3Shapes
-import Sylphrena.Config
-import Sylphrena.I18n
+import Sylenara.Config
+import Sylenara.I18n
 import qs.components
 import qs.components.controls
 import qs.components.effects

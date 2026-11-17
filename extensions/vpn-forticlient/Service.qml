@@ -1,19 +1,19 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Sylphrena
-import Sylphrena.Config
-import Sylphrena.I18n
-import Sylphrena.Services
+import Sylenara
+import Sylenara.Config
+import Sylenara.I18n
+import Sylenara.Services
 import qs.services
 import qs.utils
 
 // FortiClient (openfortivpn) connections. This extension contributes a VPN provider *type*
 // (manifest `vpnProviderType`): every FortiClient connection is an entry of the VPN providers of the
-// config (Nexus → Network, `type: "ext:vpn-forticlient"`), whose `options` hold its settings. The
-// password never goes to shell.json: it lives in ~/.config/sylphrena/vpn/<id>.conf (mode 600), the
+// config (Settings → Network, `type: "ext:vpn-forticlient"`), whose `options` hold its settings. The
+// password never goes to shell.json: it lives in ~/.config/sylenara/vpn/<id>.conf (mode 600), the
 // openfortivpn file this service generates from `options` + password. The tunnel runs through the
-// root helper of helper/sylphrena-fortivpn (installed with the extension: manifest `system`).
+// root helper of helper/sylenara-fortivpn (installed with the extension: manifest `system`).
 Scope {
     id: root
 
@@ -21,14 +21,14 @@ Scope {
     required property var ext
 
     readonly property string typeId: `ext:${root.ext.id}`
-    readonly property string helper: "/usr/local/sbin/sylphrena-fortivpn"
-    readonly property string connDir: `${Quickshell.env("HOME")}/.config/sylphrena/vpn`
+    readonly property string helper: "/usr/local/sbin/sylenara-fortivpn"
+    readonly property string connDir: `${Quickshell.env("HOME")}/.config/sylenara/vpn`
     // Until checked (test -x) nothing calls the helper
     property bool helperInstalled: false
 
     // Connections of this type, in the order of the provider list
     readonly property var connections: GlobalConfig.utilities.vpn.provider.values.filter(p => p.type === root.typeId)
-    // The connection the bar acts on: the one up, else the one selected in Nexus, else the first
+    // The connection the bar acts on: the one up, else the one selected in Settings, else the first
     readonly property var current: root.connectionById(root.connected ? root.activeId : "") ?? root.connectionById(root.pendingId) ?? root.connectionById(GlobalConfig.utilities.vpn.selectedProvider) ?? root.connections[0] ?? null
     readonly property string currentName: root.current ? (root.current.displayName || root.current.name) : ""
 
@@ -51,9 +51,9 @@ Scope {
     // Connection files waiting to be written: [{ id, payload, startArgs }] (startArgs: connect after)
     property var _writeQueue: []
 
-    // ── Export / import (extension settings in Nexus → Extensions) ───────────
+    // ── Export / import (extension settings in Settings → Extensions) ───────────
     readonly property string transferScript: `${root.ext.dir}/tools/transfer.py`
-    // Emitted when an import added or updated connections (an import row in Nexus closes its page)
+    // Emitted when an import added or updated connections (an import row in Settings closes its page)
     signal imported
 
     property bool transferBusy: false
@@ -82,7 +82,7 @@ Scope {
         return root.opt(conn, "auth", "password") === "otp";
     }
 
-    // Called by the base just before the extension is disabled from Nexus: stop the tunnel and clear
+    // Called by the base just before the extension is disabled from Settings: stop the tunnel and clear
     // DNS/hosts. Detached, because this service is destroyed right after.
     function aboutToDisable(): void {
         Quickshell.execDetached(["sudo", "-n", root.helper, "stop"]);
@@ -96,7 +96,7 @@ Scope {
         if (connectProc.running || disconnectProc.running || writerProc.running || statusProc.running)
             return;
         if (!root.helperInstalled) {
-            // Installed later from Nexus → Extensions: picked up by the next poll
+            // Installed later from Settings → Extensions: picked up by the next poll
             if (!helperCheck.running)
                 helperCheck.running = true;
             return;
@@ -126,11 +126,11 @@ Scope {
         if (!root.helperInstalled) {
             if (!helperCheck.running)
                 helperCheck.running = true;
-            root.lastError = Tr.tr("The FortiClient helper is not installed: install the extension in Nexus → Extensions");
+            root.lastError = Tr.tr("The FortiClient helper is not installed: install the extension in Settings → Extensions");
             return;
         }
         if (!c) {
-            root.lastError = Tr.tr("No FortiClient connection: add one in Nexus → Network");
+            root.lastError = Tr.tr("No FortiClient connection: add one in Settings → Network");
             return;
         }
         root.pendingId = c.id;
@@ -237,7 +237,7 @@ Scope {
 
     function buildConf(o: var, password: string): string {
         const clean = v => String(v ?? "").replace(/[\r\n]/g, "").trim();
-        const lines = ["# Generated by Sylphrena from Nexus → Network. Edit the connection there."];
+        const lines = ["# Generated by Sylenara from Settings → Network. Edit the connection there."];
         const add = (key, value) => {
             const v = clean(value);
             if (v.length > 0)
@@ -263,7 +263,7 @@ Scope {
         return lines.join("\n") + "\n";
     }
 
-    // Write ~/.config/sylphrena/vpn/<id>.conf (dir 700, file 600). The text goes through stdin, so the
+    // Write ~/.config/sylenara/vpn/<id>.conf (dir 700, file 600). The text goes through stdin, so the
     // password is never on a command line nor in a file with wider permissions.
     function writeConnection(id: string, options: var, password: string): void {
         root._enqueueWrite(id, root.buildConf(options ?? {}, password ?? ""), null);
@@ -380,7 +380,7 @@ Scope {
             Toaster.toast(Tr.tr("VPN FortiClient"), root.transferMessage, "download");
     }
 
-    // The connection was deleted from Nexus: drop its file (and the tunnel if it is the one up), and
+    // The connection was deleted from Settings: drop its file (and the tunnel if it is the one up), and
     // the certificate copies this extension made when importing it (never files the user owns)
     function forget(id: string, options: var): void {
         if (!/^[A-Za-z0-9_-]+$/.test(id))
@@ -548,7 +548,7 @@ Scope {
             onStreamFinished: {
                 const t = text.trim();
                 if (t.length > 0)
-                    root.lastError = t.split("\n").pop().replace(/^sylphrena-fortivpn:\s*/, "");
+                    root.lastError = t.split("\n").pop().replace(/^sylenara-fortivpn:\s*/, "");
             }
         }
         onExited: code => {

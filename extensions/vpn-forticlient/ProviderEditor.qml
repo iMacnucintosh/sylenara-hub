@@ -3,14 +3,14 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import Sylphrena.Config
-import Sylphrena.I18n
+import Sylenara.Config
+import Sylenara.I18n
 import qs.components
 import qs.components.controls
 import qs.services
 import qs.modules.nexus.common
 
-// Fields of a FortiClient connection, shown by Nexus → Network → Add / Edit VPN provider when the
+// Fields of a FortiClient connection, shown by Settings → Network → Add / Edit VPN provider when the
 // FortiClient type is chosen (manifest `vpnProviderType.editor`). Contract with the page:
 //   options / providerId (in), validate(): string, collectOptions(): var, commit(id) (stores the
 //   password in the connection file, never in shell.json).
@@ -124,7 +124,7 @@ ColumnLayout {
     StyledText {
         Layout.fillWidth: true
         Layout.leftMargin: Tokens.padding.small
-        text: Tr.tr("The password is stored only in ~/.config/sylphrena/vpn/ (readable only by you), never in shell.json.")
+        text: Tr.tr("The password is stored only in ~/.config/sylenara/vpn/ (readable only by you), never in shell.json.")
         color: Colours.palette.m3onSurfaceVariant
         font: Tokens.font.body.small
         wrapMode: Text.WordWrap
