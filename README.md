@@ -1,59 +1,54 @@
-# Sylphrena Hub
+<h1 align="center">Sylphrena Hub</h1>
 
-Extensiones (y, con el tiempo, widgets y más) para la shell [Sylphrena](https://github.com/iMacnucintosh/sylphrena-shell),
-y el catálogo que lee **Things**.
+<p align="center"><strong>English</strong> · <a href="./README.es.md">Español</a></p>
 
-## Qué hay
+<p align="center">
+Extensions (and, in time, widgets and more) for the <a href="https://github.com/iMacnucintosh/sylphrena-shell">Sylphrena</a> shell, and the catalogue that <strong>Things</strong> reads.
+</p>
 
-| Extensión | Qué hace |
+## What is in it
+
+| Extension | What it does |
 | --- | --- |
-| [`tasks`](extensions/tasks) | Lista de tareas en el carrusel del dashboard |
-| [`hydration`](extensions/hydration) | Control del agua que bebes, con recordatorios |
-| [`games`](extensions/games) | Tu biblioteca de Steam en el dashboard: perfil, logros, sesiones y calendario de actividad |
-| [`vpn-forticlient`](extensions/vpn-forticlient) | Conexiones VPN FortiClient (openfortivpn) en Ajustes → Red, con códigos OTP y certificados de cliente |
+| [`tasks`](extensions/tasks) | A to-do list in the dashboard carousel |
+| [`hydration`](extensions/hydration) | Track the water you drink, with reminders |
+| [`games`](extensions/games) | Your Steam library on the dashboard: profile, achievements, sessions and an activity calendar |
+| [`vpn-forticlient`](extensions/vpn-forticlient) | FortiClient VPN connections (openfortivpn) in Settings → Network, with OTP codes and client certificates |
 
-El catálogo completo, con versiones, enlaces de descarga y `sha256`, está en [`index.json`](index.json).
+The full catalogue, with versions, download links and `sha256`, is in [`index.json`](index.json).
 
-## Instalar una extensión
+## Install an extension
 
-Con **Things** (sección **Sylphrena**): pulsa una extensión para ver su ficha (descripción, capturas, requisitos, qué toca en tu equipo y
-novedades) y después **Instalar**. Pide confirmación y, solo si la extensión necesita permisos de administrador, tu contraseña.
-Desde una terminal: `sylph ext list`, `sylph ext install <zip>` y `sylph ext remove <id> [--purge]`.
+With **Things** (the **Sylphrena** section): click an extension to see its page (description, screenshots, requirements, what it touches on your computer and news) and then **Install**. It asks for confirmation and, only if the extension needs administrator rights, for your password. From a terminal: `sylph ext list`, `sylph ext install <zip>` and `sylph ext remove <id> [--purge]`.
 
-Para un zip suelto: en Things, **Instalar desde zip**, o `sylph ext install <zip>`.
-Quitarla (papelera, con la casilla opcional de borrar sus ajustes y datos) elimina también lo que instaló como administrador.
+For a loose zip: in Things, **Install from zip**, or `sylph ext install <zip>`. Removing an extension (the bin, with an optional box to delete its settings and data) also removes what it installed as administrator.
 
-## La ficha de cada extensión (`store/`)
+## The page of each extension (`store/`)
 
-Lo que Things enseña al abrir una extensión (descripción larga, puntos destacados, novedades por versión, enlaces y capturas)
-vive en `extensions/<id>/store/` y **no va dentro del zip**:
+What Things shows when you open an extension (long description, highlights, news by version, links and screenshots) lives in `extensions/<id>/store/` and **is not inside the zip**:
 
-- `details.json`: `about`, `highlights` (hasta 6), `author`, `license`, `links` (`source`, `issues`, `web`; solo https), `changelog`
-  (`version`, `date`, `changes`) y `screenshots` (`file` + `caption`).
-- `screenshots/`: imágenes png, jpg o webp de hasta 1,5 MB (máximo 6). Sin datos personales: usa datos de ejemplo.
-- `i18n/<idioma>.json`: texto en inglés → traducción, para todo lo anterior.
+- `details.json`: `about`, `highlights` (up to 6), `author`, `license`, `links` (`source`, `issues`, `web`; https only), `changelog` (`version`, `date`, `changes`) and `screenshots` (`file` + `caption`).
+- `screenshots/`: png, jpg or webp images of up to 1.5 MB (at most 6). No personal data: use sample data.
+- `i18n/<language>.json`: English text → translation, for all of the above.
 
-`scripts/build.py` valida todo y genera `store/<id>.json` (lo que descarga Things); el índice lo enlaza. **Los requisitos** (`requires`),
-lo que **toca en el equipo** (`system`, `data`) salen del manifiesto, sin escribirlos dos veces.
+`scripts/build.py` validates everything and generates `store/<id>.json` (what Things downloads); the index links it. The **requirements** (`requires`) and what it **touches on the computer** (`system`, `data`) come from the manifest, so they are not written twice.
 
-## Para quien publique aquí
+## For those who publish here
 
-Cada extensión es una carpeta `extensions/<id>/` con su `manifest.json` (ver `AGENTS.md` de Sylphrena, sección «Extensiones»).
-Las reglas del proyecto valen también aquí:
+Each extension is a folder `extensions/<id>/` with its `manifest.json` (see Sylphrena's `AGENTS.md`, the "Extensions" section). The rules of the project apply here too:
 
-- **i18n siempre:** todo texto visible va por `Tr.*` y se traduce; el catálogo de la extensión vive en `i18n/es.json`.
-- **Nada privado:** ni credenciales, ni hosts, ni datos de tu red. La configuración de cada persona vive en su `shell.json` y en sus propios ficheros.
+- **i18n always:** every visible text goes through `Tr.*` and is translated; the extension's catalogue lives in `i18n/es.json`.
+- **Nothing private:** no credentials, hosts or data of your network. Each person's configuration lives in their own `shell.json` and files.
 
-```bash
-scripts/build.py            # genera dist/<id>-<versión>.zip y reescribe index.json
-scripts/build.py --check    # comprueba que index.json y store/ están al día y que ninguna versión publicada cambió de zip (para CI)
-python3 -m unittest discover -s tests   # tests (validación de fichas, zips, scripts de Juegos)
-scripts/publish.sh <id>     # publica el zip como release <id>-<versión>
+```sh
+scripts/build.py            # generates dist/<id>-<version>.zip and rewrites index.json
+scripts/build.py --check    # checks index.json and store/ are up to date and no published version changed its zip (for CI)
+python3 -m unittest discover -s tests   # tests (store pages, zips, the Games scripts)
+scripts/publish.sh <id>     # publishes the zip as the release <id>-<version>
 ```
 
-Para sacar una versión nueva: sube `version` en el manifiesto, `scripts/build.py`, commit, `scripts/publish.sh <id>`.
-Los zips son deterministas: las mismas fuentes dan los mismos bytes.
+To ship a new version: raise `version` in the manifest, `scripts/build.py`, commit, `scripts/publish.sh <id>`. The zips are deterministic: the same sources give the same bytes.
 
-## Licencia
+## License
 
-GPL-3.0, como Sylphrena (ver [`LICENSE`](LICENSE)).
+GPL-3.0, like Sylphrena (see [`LICENSE`](LICENSE)).
