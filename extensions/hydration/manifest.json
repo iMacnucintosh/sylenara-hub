@@ -5,8 +5,8 @@
   "description": "Water intake tracker with reminders",
   "offNote": "Off — also stops the reminders and the tracking",
   "icon": "water_drop",
-  "version": "0.1.4",
-  "apiVersion": 1,
+  "version": "0.1.5",
+  "apiVersion": 2,
   "contributes": {
     "service": "Service.qml",
     "widgets": [
@@ -32,7 +32,7 @@
     ]
   },
   "requires": {
-    "sylenara": ">=0.5.3"
+    "sylenara": ">=0.7.0"
   },
   "data": [
     "state:hydration.json"
