@@ -32,7 +32,7 @@
     ]
   },
   "requires": {
-    "lunele": ">=0.5.3"
+    "sylenara": ">=0.5.3"
   },
   "data": [
     "state:hydration.json"

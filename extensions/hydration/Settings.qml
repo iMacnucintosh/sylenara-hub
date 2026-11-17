@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Lunele.I18n
+import Sylenara.I18n
 import qs.modules.nexus.common
 
 // Settings of the Hydration extension, shown inside its card in Nexus (Panels → Dashboard).

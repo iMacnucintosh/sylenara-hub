@@ -40,6 +40,6 @@
     ]
   },
   "requires": {
-    "lunele": ">=0.2.0"
+    "sylenara": ">=0.2.0"
   }
 }

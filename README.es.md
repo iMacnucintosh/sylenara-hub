@@ -1,9 +1,9 @@
-<h1 align="center">Lunele Hub</h1>
+<h1 align="center">Sylenara Hub</h1>
 
 <p align="center"><a href="./README.md">English</a> · <strong>Español</strong></p>
 
 <p align="center">
-Extensiones (y, con el tiempo, widgets y más) para la shell <a href="https://github.com/iMacnucintosh/lunele-shell">Lunele</a>, y el catálogo que lee <strong>Things</strong>.
+Extensiones (y, con el tiempo, widgets y más) para la shell <a href="https://github.com/iMacnucintosh/sylenara-shell">Sylenara</a>, y el catálogo que lee <strong>Things</strong>.
 </p>
 
 ## Qué hay
@@ -19,9 +19,9 @@ El catálogo completo, con versiones, enlaces de descarga y `sha256`, está en [
 
 ## Instalar una extensión
 
-Con **Things** (sección **Lunele**): pulsa una extensión para ver su ficha (descripción, capturas, requisitos, qué toca en tu equipo y novedades) y después **Instalar**. Pide confirmación y, solo si la extensión necesita permisos de administrador, tu contraseña. Desde una terminal: `lunele ext list`, `lunele ext install <zip>` y `lunele ext remove <id> [--purge]`.
+Con **Things** (sección **Sylenara**): pulsa una extensión para ver su ficha (descripción, capturas, requisitos, qué toca en tu equipo y novedades) y después **Instalar**. Pide confirmación y, solo si la extensión necesita permisos de administrador, tu contraseña. Desde una terminal: `syl ext list`, `syl ext install <zip>` y `syl ext remove <id> [--purge]`.
 
-Para un zip suelto: en Things, **Instalar desde zip**, o `lunele ext install <zip>`. Quitarla (papelera, con la casilla opcional de borrar sus ajustes y datos) elimina también lo que instaló como administrador.
+Para un zip suelto: en Things, **Instalar desde zip**, o `syl ext install <zip>`. Quitarla (papelera, con la casilla opcional de borrar sus ajustes y datos) elimina también lo que instaló como administrador.
 
 ## La ficha de cada extensión (`store/`)
 
@@ -35,7 +35,7 @@ Lo que Things enseña al abrir una extensión (descripción larga, puntos destac
 
 ## Para quien publique aquí
 
-Cada extensión es una carpeta `extensions/<id>/` con su `manifest.json` (ver el `AGENTS.md` de Lunele, sección «Extensiones»). Las reglas del proyecto valen también aquí:
+Cada extensión es una carpeta `extensions/<id>/` con su `manifest.json` (ver el `AGENTS.md` de Sylenara, sección «Extensiones»). Las reglas del proyecto valen también aquí:
 
 - **i18n siempre:** todo texto visible va por `Tr.*` y se traduce; el catálogo de la extensión vive en `i18n/es.json`.
 - **Nada privado:** ni credenciales, ni hosts, ni datos de tu red. La configuración de cada persona vive en su `shell.json` y en sus propios ficheros.
@@ -51,4 +51,4 @@ Para sacar una versión nueva: sube `version` en el manifiesto, `scripts/build.p
 
 ## Licencia
 
-GPL-3.0, como Lunele (ver [`LICENSE`](LICENSE)). Copyright (C) 2026 Manuel López Mallorquín.
+GPL-3.0, como Sylenara (ver [`LICENSE`](LICENSE)). Copyright (C) 2026 Manuel López Mallorquín.

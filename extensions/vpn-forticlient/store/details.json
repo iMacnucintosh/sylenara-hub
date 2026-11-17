@@ -9,15 +9,15 @@
   "author": "iMacnucintosh",
   "license": "GPL-3.0",
   "links": {
-    "source": "https://github.com/iMacnucintosh/lunele-hub/tree/main/extensions/vpn-forticlient",
-    "issues": "https://github.com/iMacnucintosh/lunele-hub/issues"
+    "source": "https://github.com/iMacnucintosh/sylenara-hub/tree/main/extensions/vpn-forticlient",
+    "issues": "https://github.com/iMacnucintosh/sylenara-hub/issues"
   },
   "changelog": [
     {
       "version": "0.4.2",
       "date": "2026-11-11",
       "changes": [
-        "Declares the Lunele version it needs"
+        "Declares the Sylenara version it needs"
       ]
     },
     {

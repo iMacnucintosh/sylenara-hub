@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Lunele.I18n
+import Sylenara.I18n
 import qs.utils
 
 // Player achievements + schema + global % (RAM + disk TTL ~1 day).

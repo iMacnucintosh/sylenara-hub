@@ -4,14 +4,14 @@
 # or by hand: sudo bash extensions/vpn-forticlient/system/install.sh
 #
 # - openfortivpn, if missing (pacman only)
-# - /usr/local/sbin/lunele-fortivpn: a root-owned copy of ../helper/lunele-fortivpn, so later
+# - /usr/local/sbin/sylenara-fortivpn: a root-owned copy of ../helper/sylenara-fortivpn, so later
 #   edits of the repo never change what runs as root
-# - /etc/sudoers.d/lunele-fortivpn: the calling user may run only that file without a password
+# - /etc/sudoers.d/sylenara-fortivpn: the calling user may run only that file without a password
 set -euo pipefail
 
 here="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-dst=/usr/local/sbin/lunele-fortivpn
-rule=/etc/sudoers.d/lunele-fortivpn
+dst=/usr/local/sbin/sylenara-fortivpn
+rule=/etc/sudoers.d/sylenara-fortivpn
 owner="${SUDO_USER:-}"
 
 [[ "$(id -u)" -eq 0 ]] || { echo "Run as root (sudo)." >&2; exit 1; }
@@ -27,7 +27,7 @@ if ! command -v openfortivpn >/dev/null 2>&1; then
   fi
 fi
 
-install -o root -g root -m 0755 "$here/../helper/lunele-fortivpn" "$dst"
+install -o root -g root -m 0755 "$here/../helper/sylenara-fortivpn" "$dst"
 
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT

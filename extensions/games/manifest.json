@@ -19,7 +19,7 @@
     ]
   },
   "requires": {
-    "lunele": ">=0.3.0",
+    "sylenara": ">=0.3.0",
     "apps": [
       "Steam, with an API key and your Steam ID in the extension's settings"
     ],

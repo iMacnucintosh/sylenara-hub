@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export / import the FortiClient connections of Lunele (extension settings in Settings).
+"""Export / import the FortiClient connections of Sylenara (extension settings in Settings).
 
 Both commands read one JSON request on stdin (so the passphrase never reaches argv or the
 environment) and print one JSON result on stdout.
@@ -12,7 +12,7 @@ export  {"connections": [{"id", "name", "options"}], "secrets": bool, "passphras
 
 import  {"path": str, "passphrase": str}
         Reads an export (decrypting it if needed). Embedded certificate files are written to
-        ~/.config/lunele/vpn/certs/<slug>/ (dir 700, key 600) and the options point there.
+        ~/.config/sylenara/vpn/certs/<slug>/ (dir 700, key 600) and the options point there.
         -> {"ok", "connections": [{"name", "options", "password"}]} or
            {"ok": false, "needsPassphrase": true} / {"ok": false, "error"}
         The shell then adds or updates the providers and writes each connection file.
@@ -25,10 +25,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-FORMAT = "lunele-forticlient"
+FORMAT = "sylenara-forticlient"
 VERSION = 1
 HOME = Path.home()
-VPN_DIR = HOME / ".config" / "lunele" / "vpn"
+VPN_DIR = HOME / ".config" / "sylenara" / "vpn"
 MAX_FILE = 4 * 1024 * 1024
 ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 

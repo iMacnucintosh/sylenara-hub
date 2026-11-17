@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.utils
 
-// Service of the Tasks extension. Persisted in ~/.local/state/lunele/tasks.json. Disabling the
+// Service of the Tasks extension. Persisted in ~/.local/state/sylenara/tasks.json. Disabling the
 // extension only unloads it: the tasks are kept.
 Scope {
     id: root

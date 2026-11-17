@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Lunele
-import Lunele.I18n
+import Sylenara
+import Sylenara.I18n
 
 // HTTP + vanity resolve for the Steam façade. Shares host.gen for cancellation.
 QtObject {

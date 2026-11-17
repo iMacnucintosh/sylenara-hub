@@ -16,7 +16,7 @@
     ]
   },
   "requires": {
-    "lunele": ">=0.3.0"
+    "sylenara": ">=0.3.0"
   },
   "data": [
     "state:tasks.json"
