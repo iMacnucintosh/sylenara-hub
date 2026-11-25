@@ -9,35 +9,31 @@
       "name": "Games (Steam)",
       "description": "Steam library, achievements and play time in a dashboard tab",
       "icon": "sports_esports",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "apiVersion": 2,
       "requires": ">=0.7.0",
       "system": false,
       "needs": [
         "Steam, with an API key and your Steam ID in the extension's settings"
       ],
-      "optional": [
-        "Millennium (Non-Steam Playtimes plugin): play time of games outside Steam"
-      ],
+      "optional": [],
       "data": [
         "state:steam-activity.json",
         "state:steam-activity.lock",
         "state:steam-achievements-cache.json",
-        "state:nonsteam-sessions.json"
+        "state:nonsteam-sessions.json",
+        "state:nonsteam-playtime.json"
       ],
       "path": "extensions/games",
-      "zip": "https://github.com/iMacnucintosh/sylenara-hub/releases/download/games-0.1.5/games-0.1.5.zip",
-      "sha256": "eef63585b9b64f6d5465aa729f5105a38ae267e9e98f641bf3aa16a212d2db2d",
-      "size": 44481,
+      "zip": "https://github.com/iMacnucintosh/sylenara-hub/releases/download/games-0.2.0/games-0.2.0.zip",
+      "sha256": "72d9a4ac74ed61a2294466c2c2d642d5a861bb028d1b05e446d0ad0238dae767",
+      "size": 45388,
       "i18n": {
         "es": {
           "name": "Juegos (Steam)",
           "description": "Biblioteca de Steam, logros y tiempo de juego en una pestaña del dashboard",
           "needs": [
             "Steam, con una clave de API y tu Steam ID en los ajustes de la extensión"
-          ],
-          "optional": [
-            "Millennium (plugin Non-Steam Playtimes): tiempo de juego de los juegos de fuera de Steam"
           ]
         }
       },
