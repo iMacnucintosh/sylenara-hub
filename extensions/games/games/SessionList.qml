@@ -85,7 +85,7 @@ StyledRect {
                 StyledText {
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
-                    text: root.tracked ? Tr.tr("No sessions recorded yet") : Tr.tr("Install Non-Steam Playtimes (Millennium) to track sessions")
+                    text: Tr.tr("No sessions recorded yet")
                     font: Tokens.font.body.small
                     color: Colours.palette.m3outline
                     wrapMode: Text.WordWrap

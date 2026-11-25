@@ -4,7 +4,7 @@
   "name": "Games (Steam)",
   "description": "Steam library, achievements and play time in a dashboard tab",
   "icon": "sports_esports",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "apiVersion": 2,
   "contributes": {
     "service": "Service.qml",
@@ -22,15 +22,13 @@
     "sylenara": ">=0.7.0",
     "apps": [
       "Steam, with an API key and your Steam ID in the extension's settings"
-    ],
-    "optional": [
-      "Millennium (Non-Steam Playtimes plugin): play time of games outside Steam"
     ]
   },
   "data": [
     "state:steam-activity.json",
     "state:steam-activity.lock",
     "state:steam-achievements-cache.json",
-    "state:nonsteam-sessions.json"
+    "state:nonsteam-sessions.json",
+    "state:nonsteam-playtime.json"
   ]
 }

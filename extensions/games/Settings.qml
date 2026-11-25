@@ -165,16 +165,6 @@ ColumnLayout {
                 key: "steam",
                 label: Tr.tr("Steam"),
                 hint: Tr.tr("Not found. Install Steam and sign in once.")
-            },
-            {
-                key: "millennium",
-                label: Tr.tr("Millennium"),
-                hint: Tr.tr("Optional. A Steam client mod; without it everything else still works.")
-            },
-            {
-                key: "playtimes",
-                label: Tr.tr("Non-Steam Playtimes plugin"),
-                hint: Tr.tr("Optional. Add it in Millennium to count the play time of games outside Steam.")
             }
         ]
 

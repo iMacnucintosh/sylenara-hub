@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Local Steam library helpers for Sylenara.
 
-Reads Non-Steam shortcuts (shortcuts.vdf), the hidden library collection
-(user-collections.hidden), and optional Millennium Non-Steam Playtimes
-(sessions.json) for hours played.
+Reads Non-Steam shortcuts (shortcuts.vdf) and the hidden library collection
+(user-collections.hidden). The hours of the shortcuts come from the extension's own
+sessions: steam-activity.py records them (Steam launches a shortcut with
+`reaper AppId=<its id>`), and they are folded here into nonsteam-playtime.json, which
+keeps them for good. The total is the one Steam counts itself (localconfig.vdf); the
+sessions are for the activity calendar, the session list and the last two weeks, and
+give the total only when Steam has none. The play time counted before (by the Millennium Non-Steam Playtimes
+plugin, which this extension used to read) is imported once into that file.
 
 Usage:
   steam-nonsteam.py [--steamid STEAMID64]
@@ -112,112 +117,184 @@ def pick_art(grid: Path, app_id: str, names: list[str]) -> str:
     return ""
 
 
-def millennium_sessions_paths() -> list[Path]:
-    home = Path.home()
-    return [
-        home / ".local/share/millennium/plugins/non-steam-playtimes/sessions.json",
-        home / ".local/share/Steam/plugins/non-steam-playtimes/sessions.json",
-        home / ".steam/steam/plugins/non-steam-playtimes/sessions.json",
-    ]
-
-
-def session_cache_path() -> Path:
+def state_dir() -> Path:
     import os
 
-    base = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
-    return base / "sylenara" / "nonsteam-sessions.json"
+    return Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state") / "sylenara"
 
 
-def merge_session_cache(fresh: dict[str, list[dict[str, int]]]) -> dict[str, list[dict[str, int]]]:
-    """Millennium collapses sessions older than two weeks, so keep our own history."""
-    path = session_cache_path()
+def playtime_path() -> Path:
+    return state_dir() / "nonsteam-playtime.json"
+
+
+def read_json(path: Path) -> object:
     try:
-        cached = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(cached, dict):
-            cached = {}
+        return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        cached = {}
+        return None
 
-    horizon = int(time.time()) - CACHE_DAYS * 24 * 60 * 60
-    merged: dict[str, list[dict[str, int]]] = {}
-    for name in set(cached) | set(fresh):
-        by_start: dict[int, dict[str, int]] = {}
-        for s in (cached.get(name) or []) + (fresh.get(name) or []):
-            try:
-                start, end = int(s["start"]), int(s["end"])
-            except (KeyError, TypeError, ValueError):
-                continue
-            if start >= horizon and end > start:
-                by_start[start] = {"start": start, "end": max(end, by_start.get(start, {}).get("end", 0))}
-        merged[name] = sorted(by_start.values(), key=lambda s: s["start"], reverse=True)
 
-    if merged != cached:
+def write_json(path: Path, data: object) -> None:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data), encoding="utf-8")
+        tmp.replace(path)
+    except OSError:
+        pass
+
+
+def clean_spans(spans: object) -> list[dict[str, int]]:
+    """Sessions with a real start (Millennium's roll-up has started_at=0), one per start, longest end."""
+    by_start: dict[int, int] = {}
+    for s in spans if isinstance(spans, list) else []:
+        if not isinstance(s, dict):
+            continue
         try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            tmp = path.with_suffix(".tmp")
-            tmp.write_text(json.dumps(merged), encoding="utf-8")
-            tmp.replace(path)
-        except OSError:
+            start = int(s.get("start", s.get("started_at")) or 0)
+            end = int(s.get("end", s.get("ended_at")) or 0)
+        except (TypeError, ValueError):
+            continue
+        if start > 0 and end > start:
+            by_start[start] = max(end, by_start.get(start, 0))
+    return [{"start": a, "end": b} for a, b in sorted(by_start.items())]
+
+
+def import_previous(names: dict[str, str]) -> dict:
+    """The play time counted before this extension tracked the shortcuts itself, once: Millennium's
+    Non-Steam Playtimes (total per game, with sessions older than two weeks rolled into one) and the
+    sessions this extension cached from it (nonsteam-sessions.json). The known sessions are kept; the
+    hours with no detail become the game's `baseline`, so its total matches. Works when Millennium is
+    gone (then only the cache, or nothing). `names`: shortcut name -> app id."""
+    home = Path.home()
+    millennium = {}
+    for path in (home / ".local/share/millennium/plugins/non-steam-playtimes/sessions.json",
+                 home / ".local/share/Steam/plugins/non-steam-playtimes/sessions.json",
+                 home / ".steam/steam/plugins/non-steam-playtimes/sessions.json"):
+        data = read_json(path)
+        if isinstance(data, dict):
+            millennium = data
+            break
+    cache = read_json(state_dir() / "nonsteam-sessions.json")
+    cache = cache if isinstance(cache, dict) else {}
+
+    games: dict[str, dict] = {}
+    for name, app_id in names.items():
+        spans = clean_spans((cache.get(name) or []) + (millennium.get(name) or []))
+        known = sum(s["end"] - s["start"] for s in spans)
+        total = 0
+        for s in millennium.get(name) or []:
+            try:
+                total += max(0, int(s.get("ended_at") or 0) - int(s.get("started_at") or 0))
+            except (TypeError, ValueError, AttributeError):
+                pass
+        if spans or total:
+            games[app_id] = {"name": name, "baseline": max(0, total - known), "sessions": spans}
+    return {"version": 1, "importedAt": int(time.time()), "games": games}
+
+
+def own_sessions() -> tuple[dict[str, list[dict[str, int]]], dict[str, dict[str, int]]]:
+    """The sessions steam-activity.py recorded ({app id: [{start, end}]}) and the ones running now."""
+    data = read_json(state_dir() / "steam-activity.json")
+    data = data if isinstance(data, dict) else {}
+    sessions = {k: clean_spans(v) for k, v in (data.get("sessions") or {}).items()}
+    active = {}
+    for k, v in (data.get("active") or {}).items():
+        try:
+            active[k] = {"start": int(v["start"]), "end": int(v["seen"])}
+        except (KeyError, TypeError, ValueError):
             pass
-    return merged
+    return sessions, active
 
 
-def load_millennium_playtimes() -> dict[str, dict]:
-    """Match Millennium Non-Steam Playtimes plugin (keyed by AppName).
+def load_playtimes(names: dict[str, str]) -> dict[str, dict]:
+    """{app id: {playtimeForever, playtime2Weeks, lastPlayed, sessions}} (minutes, unix) of the shortcuts.
 
-    Returns { name: { playtimeForever, playtime2Weeks, lastPlayed, sessions } }
-    in minutes/unix. The rolled-up session uses started_at=0 and
-    ended_at=accumulated seconds, so it is excluded from `sessions`.
-    """
-    path = next((p for p in millennium_sessions_paths() if p.is_file()), None)
-    if not path:
-        return {}
-    try:
-        sessions = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-    if not isinstance(sessions, dict):
-        return {}
+    nonsteam-playtime.json keeps every session for good (imported once, then the new ones from
+    steam-activity.py, which forgets them after a while); sessions older than CACHE_DAYS go into the
+    game's baseline, so the total never drops."""
+    path = playtime_path()
+    store = read_json(path)
+    if not isinstance(store, dict) or not isinstance(store.get("games"), dict):
+        store = import_previous(names)
+    games: dict[str, dict] = store["games"]
+    imported_at = int(store.get("importedAt") or 0)
 
     now = int(time.time())
-    cutoff = now - TWO_WEEKS
-    out: dict[str, dict] = {}
-    for name, entries in sessions.items():
-        if not isinstance(entries, list):
-            continue
-        forever_sec = 0
-        recent_sec = 0
-        last_played = 0
-        real_sessions: list[dict[str, int]] = []
-        for s in entries:
-            if not isinstance(s, dict):
-                continue
-            try:
-                started = int(s.get("started_at") or 0)
-                ended = int(s.get("ended_at") or 0)
-            except (TypeError, ValueError):
-                continue
-            if ended < started:
-                continue
-            dur = ended - started
-            forever_sec += dur
-            # Mirror plugin: count toward 2 weeks if session started after cutoff
-            if started > cutoff:
-                recent_sec += dur
-            if started != 0 and ended > last_played:
-                last_played = ended
-            if started != 0 and dur >= 60:
-                real_sessions.append({"start": started, "end": ended})
-        out[str(name)] = {
-            "playtimeForever": max(0, forever_sec // 60),
-            "playtime2Weeks": max(0, recent_sec // 60),
-            "lastPlayed": last_played,
-            "sessions": real_sessions,
-        }
+    horizon = now - CACHE_DAYS * 24 * 60 * 60
+    recorded, active = own_sessions()
+    for app_id, name in ((i, n) for n, i in names.items()):
+        g = games.setdefault(app_id, {"name": name, "baseline": 0, "sessions": []})
+        g["name"] = name
+        # What was counted before the import is already in it
+        fresh = [s for s in recorded.get(app_id, []) if s["start"] >= imported_at]
+        spans = clean_spans(g.get("sessions", []) + fresh)
+        old = [s for s in spans if s["end"] < horizon]
+        g["baseline"] = int(g.get("baseline") or 0) + sum(s["end"] - s["start"] for s in old)
+        g["sessions"] = [s for s in spans if s["end"] >= horizon]
+    if store != read_json(path):
+        write_json(path, store)
 
-    history = merge_session_cache({name: v["sessions"] for name, v in out.items()})
-    for name, v in out.items():
-        v["sessions"] = history.get(name) or []
+    out: dict[str, dict] = {}
+    cutoff = now - TWO_WEEKS
+    for app_id in names.values():
+        g = games.get(app_id) or {}
+        spans = list(g.get("sessions") or [])
+        live = active.get(app_id)
+        if live and live["end"] > live["start"]:
+            spans.append(live)
+        out[app_id] = {
+            "playtimeForever": (int(g.get("baseline") or 0) + sum(s["end"] - s["start"] for s in spans)) // 60,
+            "playtime2Weeks": sum(s["end"] - s["start"] for s in spans if s["start"] > cutoff) // 60,
+            "lastPlayed": max((s["end"] for s in spans), default=0),
+            "sessions": sorted((s for s in spans if s["end"] - s["start"] >= 60), key=lambda s: s["start"], reverse=True),
+        }
+    return out
+
+
+def parse_text_vdf(text: str) -> dict:
+    """Steam's text KeyValues ("key" "value" and "key" { … }) into nested dicts."""
+    tokens = re.findall(r'"((?:[^"\\]|\\.)*)"|([{}])', text)
+    root: dict = {}
+    stack = [root]
+    key = None
+    for quoted, brace in tokens:
+        if brace == "{":
+            child: dict = {}
+            if key is not None:
+                stack[-1][key] = child
+            stack.append(child)
+            key = None
+        elif brace == "}":
+            if len(stack) > 1:
+                stack.pop()
+            key = None
+        elif key is None:
+            key = quoted
+        else:
+            stack[-1][key] = quoted
+            key = None
+    return root
+
+
+def steam_shortcut_playtime(cfg: Path) -> dict[str, int]:
+    """The minutes Steam itself counts for each non-Steam shortcut (what its "Details" page shows): in
+    localconfig.vdf, Software → Valve → Steam → apps, keyed by the shortcut id as a signed 32-bit number."""
+    try:
+        data = parse_text_vdf((cfg / "localconfig.vdf").read_text(encoding="utf-8", errors="replace"))
+    except OSError:
+        return {}
+    node = data.get("UserLocalConfigStore", {})
+    for key in ("Software", "Valve", "Steam", "apps"):
+        node = next((v for k, v in node.items() if k.lower() == key.lower() and isinstance(v, dict)), {}) if isinstance(node, dict) else {}
+    out: dict[str, int] = {}
+    for app, values in node.items():
+        if not isinstance(values, dict) or not app.lstrip("-").isdigit() or int(app) >= 0:
+            continue  # shortcuts only: their id has the high bit set, so it is negative here
+        try:
+            out[str(int(app) & 0xFFFFFFFF)] = int(values["Playtime"])
+        except (KeyError, TypeError, ValueError):
+            pass
     return out
 
 
@@ -264,7 +341,14 @@ def load_hidden_ids(cfg: Path) -> list[str]:
     return sorted(ids)
 
 
-def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple[list[dict], list[str]]:
+def shortcut_id(entry: dict) -> str | None:
+    try:
+        return str(int(entry.get("appid", 0)) & 0xFFFFFFFF)
+    except (TypeError, ValueError):
+        return None
+
+
+def load_for_account(root: Path, acct: str) -> tuple[list[dict], list[str]]:
     cfg = root / "userdata" / acct / "config"
     hidden = load_hidden_ids(cfg)
     vdf = cfg / "shortcuts.vdf"
@@ -272,6 +356,10 @@ def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple
         return [], hidden
     grid = cfg / "grid"
     shortcuts = parse_shortcuts(vdf)
+    names = {(e.get("AppName") or "").strip(): i for e in shortcuts.values()
+             if isinstance(e, dict) and (e.get("AppName") or "").strip() and (i := shortcut_id(e))}
+    playtimes = load_playtimes(names)
+    steam_minutes = steam_shortcut_playtime(cfg)
     games: list[dict] = []
     for entry in shortcuts.values():
         if not isinstance(entry, dict):
@@ -281,10 +369,8 @@ def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple
             continue
         if entry.get("IsHidden") == 1:
             continue
-        raw_id = entry.get("appid", 0)
-        try:
-            app_id = str(int(raw_id) & 0xFFFFFFFF)
-        except (TypeError, ValueError):
+        app_id = shortcut_id(entry)
+        if not app_id:
             continue
         icon = entry.get("icon") or ""
         icon_url = file_url(Path(icon)) if icon else ""
@@ -307,7 +393,7 @@ def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple
             last = int(last)
         except (TypeError, ValueError):
             last = 0
-        pt = playtimes.get(name) or {}
+        pt = playtimes.get(app_id) or {}
         if pt.get("lastPlayed"):
             last = max(last, int(pt["lastPlayed"]))
         games.append(
@@ -319,10 +405,11 @@ def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple
                 "capsuleUrl": capsule,
                 "headerUrl": header,
                 "lastPlayed": last,
-                "playtimeForever": int(pt.get("playtimeForever") or 0),
+                # The total is Steam's own count, as for Steam games; our sessions only when it has none
+                "playtimeForever": steam_minutes.get(app_id, int(pt.get("playtimeForever") or 0)),
                 "playtime2Weeks": int(pt.get("playtime2Weeks") or 0),
                 "sessions": pt.get("sessions") or [],
-                "tracked": bool(pt),
+                "tracked": True,
                 "nonSteam": True,
             }
         )
@@ -331,35 +418,25 @@ def load_for_account(root: Path, acct: str, playtimes: dict[str, dict]) -> tuple
 
 
 def requirements_status() -> dict:
-    """What the extension can use on this machine: Steam (a userdata folder), Millennium and its
-    Non-Steam Playtimes plugin. Only looks; installs nothing."""
-    home = Path.home()
-    steam = any((r / "userdata").is_dir() for r in steam_roots())
-    millennium = any(p.is_dir() for p in (home / ".local/share/millennium", home / ".millennium"))
-    plugin_dirs = [
-        home / ".local/share/millennium/plugins/non-steam-playtimes",
-        home / ".local/share/Steam/plugins/non-steam-playtimes",
-        home / ".steam/steam/plugins/non-steam-playtimes",
-    ]
-    return {"steam": steam, "millennium": millennium, "playtimes": any(d.is_dir() for d in plugin_dirs)}
+    """What the extension can use on this machine: Steam (a userdata folder). Only looks; installs nothing."""
+    return {"steam": any((r / "userdata").is_dir() for r in steam_roots())}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--steamid", default="")
-    ap.add_argument("--status", action="store_true", help="print what is installed (Steam, Millennium, plugin)")
+    ap.add_argument("--status", action="store_true", help="print what is installed (Steam)")
     args = ap.parse_args()
     if args.status:
         json.dump(requirements_status(), sys.stdout)
         sys.stdout.write("\n")
         return 0
     acct = account_id(args.steamid.strip() or None)
-    playtimes = load_millennium_playtimes()
     games: list[dict] = []
     hidden: list[str] = []
     for root in steam_roots():
         if acct:
-            games, hidden = load_for_account(root, acct, playtimes)
+            games, hidden = load_for_account(root, acct)
             if games or hidden:
                 break
         else:
@@ -368,7 +445,7 @@ def main() -> int:
                 continue
             for child in sorted(userdata.iterdir()):
                 if child.is_dir() and child.name.isdigit():
-                    games, hidden = load_for_account(root, child.name, playtimes)
+                    games, hidden = load_for_account(root, child.name)
                     if games or hidden:
                         break
             if games or hidden:
