@@ -72,48 +72,82 @@ class HiddenAndPrivate(unittest.TestCase):
             self.assertEqual(sn.load_private_ids(Path(d)), set())
 
 
-class Sessions(unittest.TestCase):
-    def merge(self, state_dir, fresh):
+class Playtime(unittest.TestCase):
+    """Play time of the shortcuts: imported once from Millennium and the old cache, then our own sessions."""
+
+    def setUp(self):
+        import os
+        import time
+
+        self.now = int(time.time())
+        self.tmp = tempfile.TemporaryDirectory()
+        self.home = Path(self.tmp.name) / "home"
+        self.state = Path(self.tmp.name) / "state"
+        (self.state / "sylenara").mkdir(parents=True)
+        self.env = {k: os.environ.get(k) for k in ("HOME", "XDG_STATE_HOME")}
+        os.environ["HOME"] = str(self.home)
+        os.environ["XDG_STATE_HOME"] = str(self.state)
+
+    def tearDown(self):
         import os
 
-        os.environ["XDG_STATE_HOME"] = state_dir
-        try:
-            return sn.merge_session_cache(fresh)
-        finally:
-            del os.environ["XDG_STATE_HOME"]
+        for k, v in self.env.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        self.tmp.cleanup()
 
-    def test_merge_keeps_the_history_without_duplicates(self):
-        import time
+    def millennium(self, data):
+        path = self.home / ".local/share/millennium/plugins/non-steam-playtimes/sessions.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(data))
+        return path
 
-        now = int(time.time())
-        first = {"start": now - 7200, "end": now - 6600}
-        second = {"start": now - 3600, "end": now - 3300}
-        with tempfile.TemporaryDirectory() as d:
-            self.merge(d, {"A": [first]})
-            merged = self.merge(d, {"A": [first, second]})   # the first one is seen again
-            again = self.merge(d, {})                        # Millennium forgot them: our history keeps them
-        self.assertEqual([s["start"] for s in merged["A"]], [second["start"], first["start"]])
-        self.assertEqual(len(again["A"]), 2)
+    def activity(self, sessions=None, active=None):
+        (self.state / "sylenara/steam-activity.json").write_text(json.dumps({"sessions": sessions or {}, "active": active or {}}))
 
-    def test_sessions_older_than_the_horizon_are_dropped(self):
-        import time
+    def test_the_import_keeps_millennium_totals_and_ignores_what_is_not_a_shortcut(self):
+        real = {"started_at": self.now - 7200, "ended_at": self.now - 3600}
+        self.millennium({"Minecraft": [{"started_at": 0, "ended_at": 36000}, real],
+                         "Battle.net-Setup.exe": [{"started_at": self.now - 100, "ended_at": self.now}]})
+        # A session the old cache kept (Millennium rolled it into its total)
+        (self.state / "sylenara/nonsteam-sessions.json").write_text(
+            json.dumps({"Minecraft": [{"start": self.now - 90000, "end": self.now - 90000 + 7200}]}))
+        out = sn.load_playtimes({"Minecraft": "2370657526"})
+        self.assertEqual(set(out), {"2370657526"})
+        self.assertEqual(out["2370657526"]["playtimeForever"], (36000 + 3600) // 60)  # Millennium's total
+        self.assertEqual(len(out["2370657526"]["sessions"]), 2)
 
-        old = {"start": int(time.time()) - (sn.CACHE_DAYS + 5) * 86400, "end": int(time.time()) - (sn.CACHE_DAYS + 5) * 86400 + 600}
-        with tempfile.TemporaryDirectory() as d:
-            self.assertEqual(self.merge(d, {"A": [old]})["A"], [])
+    def test_it_works_once_millennium_is_gone_and_new_sessions_add_up(self):
+        path = self.millennium({"WoW": [{"started_at": 0, "ended_at": 7200}]})
+        first = sn.load_playtimes({"WoW": "4195243827"})["4195243827"]["playtimeForever"]
+        path.unlink()
+        imported_at = json.loads(sn.playtime_path().read_text())["importedAt"]
+        self.activity({"4195243827": [{"start": imported_at + 10, "end": imported_at + 1810}]})
+        again = sn.load_playtimes({"WoW": "4195243827"})["4195243827"]["playtimeForever"]
+        twice = sn.load_playtimes({"WoW": "4195243827"})["4195243827"]["playtimeForever"]
+        self.assertEqual(first, 120)
+        self.assertEqual(again, 150)
+        self.assertEqual(twice, 150)  # the same session is not counted again
 
-    def test_broken_sessions_are_ignored(self):
-        import time
+    def test_a_running_game_counts_and_nothing_to_import_is_fine(self):
+        self.activity(active={"4195243827": {"start": self.now - 600, "seen": self.now}})
+        out = sn.load_playtimes({"WoW": "4195243827"})["4195243827"]
+        self.assertEqual(out["playtimeForever"], 10)
+        self.assertEqual(out["playtime2Weeks"], 10)
 
-        now = int(time.time())
-        with tempfile.TemporaryDirectory() as d:
-            merged = self.merge(d, {"A": [{"start": now - 100}, {"start": now - 50, "end": now - 60}, "x", {"start": now - 200, "end": now - 100}]})
-        self.assertEqual(len(merged["A"]), 1)
+    def test_old_sessions_move_to_the_baseline_and_the_total_stays(self):
+        old = self.now - (sn.CACHE_DAYS + 5) * 86400
+        (self.state / "sylenara/nonsteam-sessions.json").write_text(json.dumps({"WoW": [{"start": old, "end": old + 3600}]}))
+        out = sn.load_playtimes({"WoW": "4195243827"})["4195243827"]
+        self.assertEqual(out["playtimeForever"], 60)
+        self.assertEqual(out["sessions"], [])
 
 
 class Requirements(unittest.TestCase):
-    def test_status_has_the_three_keys(self):
-        self.assertEqual(set(sn.requirements_status()), {"steam", "millennium", "playtimes"})
+    def test_status_only_needs_steam(self):
+        self.assertEqual(set(sn.requirements_status()), {"steam"})
 
 
 if __name__ == "__main__":

@@ -266,7 +266,7 @@ QtObject {
         if (localGame) {
             root.host.loading = false;
             root.host.focusLoading = false;
-            root.host.focusError = localGame.tracked ? Tr.tr("Playtime tracked by Millennium") : Tr.tr("Non-Steam game — no Steam achievements");
+            root.host.focusError = Tr.tr("Non-Steam game — no Steam achievements");
             root.host.focusAchievements = [];
             root.host.focusProgress = null;
             return;

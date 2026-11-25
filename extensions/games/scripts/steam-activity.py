@@ -4,8 +4,9 @@
 The Steam Web API only exposes lifetime and two-week totals, so this keeps two
 sources of per-day activity:
 
-  poll      Detect running Steam games (Steam's `reaper AppId=<id>` launcher
-            process) and record real sessions while the shell is running.
+  poll      Detect running Steam games and non-Steam shortcuts (Steam's
+            `reaper AppId=<id>` launcher process) and record real sessions while
+            the shell is running.
   snapshot  Compare playtime_forever against the previous snapshot and
             attribute whatever the tracked sessions do not explain to the day
             of rtime_last_played (covers play while the shell was off).
@@ -33,7 +34,6 @@ from pathlib import Path
 KEEP_DAYS = 400
 POLL_GAP = 180  # seconds without seeing a game before its session is closed
 MIN_SESSION = 60
-SHORTCUT_BIT = 0x80000000  # non-Steam shortcuts, tracked by Millennium instead
 
 
 def state_dir() -> Path:
@@ -70,7 +70,9 @@ def running_app_ids() -> set[str]:
         for arg in args[1:]:
             if arg.startswith(b"AppId="):
                 value = arg[6:].decode(errors="ignore")
-                if value.isdigit() and 0 < int(value) < SHORTCUT_BIT:
+                # Steam games and non-Steam shortcuts alike (their id has the high bit set);
+                # steam-nonsteam.py folds the shortcuts' sessions into their play time
+                if value.isdigit() and int(value) > 0:
                     ids.add(value)
                 break
     return ids
