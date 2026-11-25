@@ -5,7 +5,9 @@ Reads Non-Steam shortcuts (shortcuts.vdf) and the hidden library collection
 (user-collections.hidden). The hours of the shortcuts come from the extension's own
 sessions: steam-activity.py records them (Steam launches a shortcut with
 `reaper AppId=<its id>`), and they are folded here into nonsteam-playtime.json, which
-keeps them for good. The play time counted before (by the Millennium Non-Steam Playtimes
+keeps them for good. The total is the one Steam counts itself (localconfig.vdf); the
+sessions are for the activity calendar, the session list and the last two weeks, and
+give the total only when Steam has none. The play time counted before (by the Millennium Non-Steam Playtimes
 plugin, which this extension used to read) is imported once into that file.
 
 Usage:
@@ -250,6 +252,52 @@ def load_playtimes(names: dict[str, str]) -> dict[str, dict]:
     return out
 
 
+def parse_text_vdf(text: str) -> dict:
+    """Steam's text KeyValues ("key" "value" and "key" { … }) into nested dicts."""
+    tokens = re.findall(r'"((?:[^"\\]|\\.)*)"|([{}])', text)
+    root: dict = {}
+    stack = [root]
+    key = None
+    for quoted, brace in tokens:
+        if brace == "{":
+            child: dict = {}
+            if key is not None:
+                stack[-1][key] = child
+            stack.append(child)
+            key = None
+        elif brace == "}":
+            if len(stack) > 1:
+                stack.pop()
+            key = None
+        elif key is None:
+            key = quoted
+        else:
+            stack[-1][key] = quoted
+            key = None
+    return root
+
+
+def steam_shortcut_playtime(cfg: Path) -> dict[str, int]:
+    """The minutes Steam itself counts for each non-Steam shortcut (what its "Details" page shows): in
+    localconfig.vdf, Software → Valve → Steam → apps, keyed by the shortcut id as a signed 32-bit number."""
+    try:
+        data = parse_text_vdf((cfg / "localconfig.vdf").read_text(encoding="utf-8", errors="replace"))
+    except OSError:
+        return {}
+    node = data.get("UserLocalConfigStore", {})
+    for key in ("Software", "Valve", "Steam", "apps"):
+        node = next((v for k, v in node.items() if k.lower() == key.lower() and isinstance(v, dict)), {}) if isinstance(node, dict) else {}
+    out: dict[str, int] = {}
+    for app, values in node.items():
+        if not isinstance(values, dict) or not app.lstrip("-").isdigit() or int(app) >= 0:
+            continue  # shortcuts only: their id has the high bit set, so it is negative here
+        try:
+            out[str(int(app) & 0xFFFFFFFF)] = int(values["Playtime"])
+        except (KeyError, TypeError, ValueError):
+            pass
+    return out
+
+
 def load_private_ids(cfg: Path) -> set[str]:
     """Games marked as private in the library ("Manage → Set as private"): Steam keeps them in
     localconfig.vdf as "PrivateApps_<account>" "[id,id,…]"."""
@@ -311,6 +359,7 @@ def load_for_account(root: Path, acct: str) -> tuple[list[dict], list[str]]:
     names = {(e.get("AppName") or "").strip(): i for e in shortcuts.values()
              if isinstance(e, dict) and (e.get("AppName") or "").strip() and (i := shortcut_id(e))}
     playtimes = load_playtimes(names)
+    steam_minutes = steam_shortcut_playtime(cfg)
     games: list[dict] = []
     for entry in shortcuts.values():
         if not isinstance(entry, dict):
@@ -356,7 +405,8 @@ def load_for_account(root: Path, acct: str) -> tuple[list[dict], list[str]]:
                 "capsuleUrl": capsule,
                 "headerUrl": header,
                 "lastPlayed": last,
-                "playtimeForever": int(pt.get("playtimeForever") or 0),
+                # The total is Steam's own count, as for Steam games; our sessions only when it has none
+                "playtimeForever": steam_minutes.get(app_id, int(pt.get("playtimeForever") or 0)),
                 "playtime2Weeks": int(pt.get("playtime2Weeks") or 0),
                 "sessions": pt.get("sessions") or [],
                 "tracked": True,

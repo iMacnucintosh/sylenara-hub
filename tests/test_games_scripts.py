@@ -145,6 +145,45 @@ class Playtime(unittest.TestCase):
         self.assertEqual(out["sessions"], [])
 
 
+class SteamPlaytime(unittest.TestCase):
+    """The total of a shortcut is the one Steam counts (localconfig.vdf, signed id)."""
+
+    def test_reads_the_shortcuts_playtime_and_skips_steam_games(self):
+        vdf = """"UserLocalConfigStore"
+{
+	"Software"
+	{
+		"Valve"
+		{
+			"Steam"
+			{
+				"apps"
+				{
+					"-99723469"
+					{
+						"Playtime2wks"		"7918"
+						"Playtime"		"7918"
+					}
+					"1737100"
+					{
+						"LastPlayed"		"1793730835"
+					}
+					"-1924309770"
+					{
+						"LastPlayed"		"1"
+					}
+				}
+			}
+		}
+	}
+}
+"""
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "localconfig.vdf").write_text(vdf)
+            self.assertEqual(sn.steam_shortcut_playtime(Path(d)), {"4195243827": 7918})
+            self.assertEqual(sn.steam_shortcut_playtime(Path(d) / "missing"), {})
+
+
 class Requirements(unittest.TestCase):
     def test_status_only_needs_steam(self):
         self.assertEqual(set(sn.requirements_status()), {"steam"})
